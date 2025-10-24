@@ -1,8 +1,8 @@
 
-<H3>NAME: DHARSHAN D</H3>
-<H3>REGISTER NO. : 212223230045</H3>
+<H3>ENTER YOUR NAME:  DHARSHAN D</H3> 
+<H3>ENTER YOUR REGISTER NO.  212223230045</H3> 
 <H3>EX. NO.4</H3>
-<H3>DATE:30/09/2025</H3>
+<H3>DATE:  30-09-2025</H3> 
 <H1 ALIGN =CENTER>Implementation of MLP with Backpropagation for Multiclassification</H1>
 <H3>Aim:</H3>
 To implement a Multilayer Perceptron for Multi classification
@@ -117,62 +117,71 @@ Normalize our dataset.
 <H3>Program:</H3> 
 
 ```
-
 import pandas as pd
+import sklearn
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
-# 1. Load dataset (download car.data from Kaggle)
-col_names = ["buying", "maint", "doors", "persons", "lug_boot", "safety", "class"]
-data = pd.read_csv("car_evaluation.csv", names=col_names)
+# Load the Iris dataset from UCI repository
+url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
+irisdata = pd.read_csv(url, names=names)
 
-# 2. Separate features and target
-X = data.drop("class", axis=1)
-y = data["class"]
+# Prepare features (X) and labels (y)
+X = irisdata.iloc[:, 0:4]
+y = irisdata.select_dtypes(include=[object])
 
-# 3. Encode categorical features
-for col in X.columns:
-    le = LabelEncoder()
-    X[col] = le.fit_transform(X[col])
+# Display sample data
+print("Features (first 5 rows):")
+print(X.head())
+print("\nLabels (first 5 rows):")
+print(y.head())
 
-# Encode target labels
-le_target = LabelEncoder()
-y = le_target.fit_transform(y)
+# Show unique classes
+print("\nUnique classes in the dataset:")
+print(y.Class.unique())
 
-# 4. Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# Convert categorical labels to numerical values
+le = preprocessing.LabelEncoder()
+y = y.apply(le.fit_transform)
+print("\nEncoded labels (first 5 rows):")
+print(y.head())
 
-# 5. Normalize features
+# Split data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+# Standardize features
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-# 6. Define MLP classifier
-mlp = MLPClassifier(hidden_layer_sizes=(50, 30), max_iter=500, random_state=42)
+# Create and train Multi-layer Perceptron classifier
+mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=1000)
+mlp.fit(X_train, y_train.values.ravel())
 
-# 7. Train the model
-mlp.fit(X_train, y_train)
+# Make predictions
+predictions = mlp.predict(X_test)
+print("\nModel predictions:")
+print(predictions)
 
-# 8. Predictions
-y_pred = mlp.predict(X_test)
-
-# 9. Evaluation
-print("Confusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
-
+# Evaluate model performance
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, predictions))
 print("\nClassification Report:")
-print(classification_report(y_test, y_pred, target_names=le_target.classes_))
-
-
-
+print(classification_report(y_test, predictions))
 ```
+
 <H3>Output:</H3>
 
-<img width="756" height="430" alt="image" src="https://github.com/user-attachments/assets/54564000-7248-4504-8443-1bcfc1a29aa6" />
+![image](https://github.com/user-attachments/assets/e86d9403-c074-4e92-ae7a-3064b4386c1d)
+
+![image](https://github.com/user-attachments/assets/a0446c03-f4fd-44c4-98b3-ae2910be24b2)
+
+![image](https://github.com/user-attachments/assets/4d2f825a-9c80-4942-bfb1-89d46ccead1b)
 
 <H3>Result:</H3>
 Thus, MLP is implemented for multi-classification using python.
